@@ -78,24 +78,40 @@ run_apply()
         echo "success"
 }
 
-start_time=$(date +%s.%N)
-read_apply
-end_time=$(date +%s.%N)
-read_time=$(echo "$end_time - $start_time" | bc)
-read_execution_time+=($read_time)
+read_execution_time=()
+write_execution_time=()
+run_execution_time=()
 
-start_time=$(date +%s.%N)
-write_apply
-end_time=$(date +%s.%N)
-write_time=$(echo "$end_time - $start_time" | bc)
-write_execution_time+=($read_time)
+for i in {1..10}
+do
+        start_time=$(date +%s.%N)
+        read_apply
+        end_time=$(date +%s.%N)
+        read_time=$(echo "$end_time - $start_time" | bc)
+        read_execution_time+=($read_time)
 
-start_time=$(date +%s.%N)
-run_apply
-end_time=$(date +%s.%N)
-run_time=$(echo "$end_time - $start_time" | bc)
-run_execution_time+=($run_time)
+        start_time=$(date +%s.%N)
+        write_apply
+        end_time=$(date +%s.%N)
+        write_time=$(echo "$end_time - $start_time" | bc)
+        write_execution_time+=($read_time)
 
-echo "read time  : " $read_time
-echo "write time : " $write_time
-echo "run time   : " $run_time
+        start_time=$(date +%s.%N)
+        run_apply
+        end_time=$(date +%s.%N)
+        run_time=$(echo "$end_time - $start_time" | bc)
+        run_execution_time+=($run_time)
+
+        echo "read time  : " $read_time
+        echo "write time : " $write_time
+        echo "run time   : " $run_time
+done
+
+average_time=$(echo "${read_execution_time[*]}" | tr ' ' '\n' | awk '{s+=$1} END {print s/NR}')
+echo "Average read execution time: $average_time seconds"
+
+average_time=$(echo "${write_execution_time[*]}" | tr ' ' '\n' | awk '{s+=$1} END {print s/NR}')
+echo "Average write execution time: $average_time seconds"
+
+average_time=$(echo "${run_execution_time[*]}" | tr ' ' '\n' | awk '{s+=$1} END {print s/NR}')
+echo "Average run execution time: $average_time seconds"
