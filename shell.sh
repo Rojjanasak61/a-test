@@ -5,7 +5,7 @@ read_file="05-read-db.yaml"
 read_apply()
 {
   read_db=$(kubectl apply -f ./${read_file} --namespace=${namespace})
-  sleep 2
+  sleep 4
   podname=$(kubectl get pod -n ${namespace} -o=name  |  sed "s/^.\{4\}//"  | grep -e "read-db-job")
 
   while true
@@ -53,6 +53,7 @@ EOF
                 let row++
         done
         job=$(kubectl apply -f .)
+        sleep 2
         podname=$(kubectl get pod -n ${namespace} -o=name  |  sed "s/^.\{4\}//"  | grep -e "job")
 
 }
@@ -95,7 +96,6 @@ do
         end_time=$(date +%s.%N)
         run_time=$(echo "$end_time - $start_time" | bc)
         run_execution_time+=($run_time)
-        echo 1+$i-1
 done
 
 average_time=$(echo "${read_execution_time[*]}" | tr ' ' '\n' | awk '{s+=$1} END {print s/NR}')
