@@ -131,15 +131,5 @@ EOF
 
 }
 
-while true
-do
-   logs=$(kubectl logs -n ${namespace} ${podname} | grep HTTP | grep "POST")
-   if [[ $logs == *"POST"* ]]; then
-           if [[ ${logs: -5} != *"200"* ]]; then
-                   read_apply
-                   write_apply
-                   break
-           fi
-   fi
-   sleep 2
-done
+read_apply
+write_apply
