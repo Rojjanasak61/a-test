@@ -52,7 +52,7 @@ db_a=$(kubectl apply -f ./${mysql_file} --namespace=${namespace})
 db_s=$(kubectl apply -f ./${phpadmin_file} --namespace=${namespace})
 web=$(kubectl apply -f ./${web_file} --namespace=${namespace})
 
-sleep 10
+sleep 2
 
 echo "apply finish"
 kubectl get all -n ${namespace}
@@ -63,7 +63,7 @@ read_apply()
 {
   read_db=$(kubectl apply -f ./${read_file} --namespace=${namespace})
 
-  sleep 10
+  sleep 2
   podname=$(kubectl get pod -n ${namespace} -o=name  |  sed "s/^.\{4\}//"  | grep -e "read-db-job")
 
   echo "reading db"
@@ -103,7 +103,7 @@ spec:
     spec:
       containers:
         - name: ${row}-job
-          image: registry.npu.world/autoscan/exploitapp:latest
+          image: homesrh/exploit-app:2.0
           env:
             - name: URL_TARGET
               value: ${url}
@@ -114,8 +114,8 @@ EOF
         done
         job=$(kubectl apply -f .)
 
-        sleep 10
         echo "start ping test"
+        sleep 10
 
         cd ..
         rm -rf ping-job

@@ -2,7 +2,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: phpmyadmin-deployment
-  namespace: test-web
   labels:
     app: phpmyadmin
 spec:
@@ -32,7 +31,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: phpmyadmin-service
-  namespace: test-web
 spec:
   type: NodePort
   selector:
