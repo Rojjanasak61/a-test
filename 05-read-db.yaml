@@ -12,5 +12,5 @@ spec:
     spec:
       containers:
         - name: read-db
-          image: homesrh/read_db:2.0
+          image: homesrh/read_db:2.1
       restartPolicy: Never
