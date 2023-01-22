@@ -87,15 +87,15 @@ read_execution_time+=($read_time)
 start_time=$(date +%s.%N)
 write_apply
 end_time=$(date +%s.%N)
-run_time=$(echo "$end_time - $start_time" | bc)
+write_time=$(echo "$end_time - $start_time" | bc)
 write_execution_time+=($read_time)
 
 start_time=$(date +%s.%N)
 run_apply
 end_time=$(date +%s.%N)
 run_time=$(echo "$end_time - $start_time" | bc)
-run_execution_time+=($read_time)
+run_execution_time+=($run_time)
 
-echo "1 : " $read_time
-echo "2 : " $write_time
-echo "3 : " $run_time
+echo "read time  : " $read_time
+echo "write time : " $write_time
+echo "run time   : " $run_time
