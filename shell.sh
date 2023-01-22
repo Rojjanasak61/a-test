@@ -56,25 +56,8 @@ EOF
                 let row++
         done
         job=$(kubectl apply -f .)
-        end_time=$(date +%s.%N)
-        write_time=$(echo "$end_time - $start_time" | bc)
-
         podname=$(kubectl get pod -n ${namespace} -o=name  |  sed "s/^.\{4\}//"  | grep -e "job")
 
-        start_time=$(date +%s.%N)
-        echo "start test"
-        while true
-        do
-                POD_COUNT=$(kubectl get pods -n ${namespace} | wc -l)
-                if [[ $POD_COUNT == *"4"* ]]; then
-                        echo "test success"
-                        break
-                fi
-        done
-
-        cd ..
-        rm -rf test-job
-        echo "success"
 }
 
 run_apply()
@@ -91,7 +74,7 @@ run_apply()
 
         cd ..
         rm -rf test-job
-        sleep 4
+        sleep 8
         echo "success"
 }
 
