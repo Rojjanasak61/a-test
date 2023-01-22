@@ -121,12 +121,12 @@ EOF
                 POD_COUNT=$(kubectl get pods -n ${namespace} | wc -l)
                 if [[ $POD_COUNT == *"4"* ]]; then
                         echo "test success"
+                        break
                 fi
-                sleep 2
         done
 
         cd ..
-        rm -rf ping-job
+        rm -rf test-job
         echo "success"
 
 }
