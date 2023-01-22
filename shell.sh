@@ -74,7 +74,7 @@ run_apply()
 
         cd ..
         rm -rf test-job
-        sleep 8
+        sleep 10
         echo "success"
 }
 
