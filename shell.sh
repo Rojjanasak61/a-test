@@ -122,7 +122,7 @@ EOF
                 if [[ $POD_COUNT == *"4"* ]]; then
                         echo "test success"
                 fi
-                sleep 1
+                sleep 2
         done
 
         cd ..
