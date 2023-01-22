@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: read-db-job
+  namespace: test-web
+spec:
+  ttlSecondsAfterFinished: 100
+  template:
+    metadata:
+      name: read-db
+      labels:
+        app: read-db
+    spec:
+      containers:
+        - name: read-db
+          image: registry.npu.world/autoscan/db:latest
+      restartPolicy: Never

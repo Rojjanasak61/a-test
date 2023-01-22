@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment
+  namespace: test-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      name: web-pods
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: registry.npu.world/autoscan/webapp:latest
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-service
+  namespace: test-web
+spec:
+  type: NodePort
+  selector:
+    app: web
+  ports:
+    - port: 5000
+      targetPort: 5000
