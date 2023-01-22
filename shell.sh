@@ -53,11 +53,10 @@ db_s=$(kubectl apply -f ./${phpadmin_file} --namespace=${namespace})
 web=$(kubectl apply -f ./${web_file} --namespace=${namespace})
 
 sleep 2
-
-echo "apply finish"
 kubectl get all -n ${namespace}
 
 podname=$(kubectl get pod -n ${namespace} -o=name  |  sed "s/^.\{4\}//"  | grep -e "web-deployment")
+echo "apply finish"
 
 read_apply()
 {
@@ -72,7 +71,8 @@ read_apply()
   do
           logs=$(kubectl logs -n ${namespace} ${podname})
           if [[ $logs == *"success"* ]]; then
-                  break
+                echo "read db finish"
+                break
           fi
           sleep 2
   done
@@ -81,8 +81,8 @@ read_apply()
 
 write_apply()
 {
-        mkdir ping-job
-        cd ping-job
+        mkdir test-job
+        cd test-job
         row=1
         for url in $logs
         do
@@ -113,9 +113,16 @@ EOF
                 let row++
         done
         job=$(kubectl apply -f .)
+        podname=$(kubectl get pod -n ${namespace} -o=name  |  sed "s/^.\{4\}//"  | grep -e "job")
 
-        echo "start ping test"
-        sleep 10
+        echo "start test"
+        while true
+        do
+                POD_COUNT=$(kubectl get pods -n ${namespace} | wc -l)
+                if [[ $POD_COUNT == *"4"* ]]; then
+                        echo "success"
+                fi
+        done
 
         cd ..
         rm -rf ping-job
