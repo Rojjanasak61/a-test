@@ -120,8 +120,9 @@ EOF
         do
                 POD_COUNT=$(kubectl get pods -n ${namespace} | wc -l)
                 if [[ $POD_COUNT == *"4"* ]]; then
-                        echo "success"
+                        echo "test success"
                 fi
+                sleep 1
         done
 
         cd ..
