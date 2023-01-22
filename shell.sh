@@ -2,19 +2,16 @@
 namespace="test-web"
 read_file="05-read-db.yaml"
 
-echo "starting .."
 read_apply()
 {
   read_db=$(kubectl apply -f ./${read_file} --namespace=${namespace})
   sleep 2
   podname=$(kubectl get pod -n ${namespace} -o=name  |  sed "s/^.\{4\}//"  | grep -e "read-db-job")
-  echo "reading db"
 
   while true
   do
           logs=$(kubectl logs -n ${namespace} ${podname})
           if [[ $logs == *"success"* ]]; then
-                echo "read db finish"
                 break
           fi
           sleep 2
@@ -62,27 +59,24 @@ EOF
 
 run_apply()
 {
-        echo "start test"
         while true
         do
                 POD_COUNT=$(kubectl get pods -n ${namespace} | wc -l)
                 if [[ $POD_COUNT == *"4"* ]]; then
-                        echo "test success"
                         break
                 fi
         done
 
         cd ..
         rm -rf test-job
-        sleep 10
-        echo "success"
+        sleep 4
 }
 
 read_execution_time=()
 write_execution_time=()
 run_execution_time=()
 
-for i in {1..10}
+for i in {1..30}
 do
         start_time=$(date +%s.%N)
         read_apply
@@ -94,24 +88,21 @@ do
         write_apply
         end_time=$(date +%s.%N)
         write_time=$(echo "$end_time - $start_time" | bc)
-        write_execution_time+=($read_time)
+        write_execution_time+=($write_time)
 
         start_time=$(date +%s.%N)
         run_apply
         end_time=$(date +%s.%N)
         run_time=$(echo "$end_time - $start_time" | bc)
         run_execution_time+=($run_time)
-
-        echo "read time  : " $read_time
-        echo "write time : " $write_time
-        echo "run time   : " $run_time
+        echo 1+$i-1
 done
 
 average_time=$(echo "${read_execution_time[*]}" | tr ' ' '\n' | awk '{s+=$1} END {print s/NR}')
-echo "Average read execution time: $average_time seconds"
+echo "Average read data time: $average_time seconds"
 
 average_time=$(echo "${write_execution_time[*]}" | tr ' ' '\n' | awk '{s+=$1} END {print s/NR}')
-echo "Average write execution time: $average_time seconds"
+echo "Average apply pods time: $average_time seconds"
 
 average_time=$(echo "${run_execution_time[*]}" | tr ' ' '\n' | awk '{s+=$1} END {print s/NR}')
-echo "Average run execution time: $average_time seconds"
+echo "Average pentest time: $average_time seconds"
