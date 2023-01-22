@@ -81,6 +81,7 @@ read_apply()
 
 write_apply()
 {
+        start_time=$(date +%s.%N)
         mkdir test-job
         cd test-job
         row=1
@@ -113,8 +114,12 @@ EOF
                 let row++
         done
         job=$(kubectl apply -f .)
+        end_time=$(date +%s.%N)
+        write_time=$(echo "$end_time - $start_time" | bc)
+
         podname=$(kubectl get pod -n ${namespace} -o=name  |  sed "s/^.\{4\}//"  | grep -e "job")
 
+        start_time=$(date +%s.%N)
         echo "start test"
         while true
         do
@@ -127,9 +132,18 @@ EOF
 
         cd ..
         rm -rf test-job
+        end_time=$(date +%s.%N)
+        run_time=$(echo "$end_time - $start_time" | bc)
         echo "success"
 
 }
 
+start_time=$(date +%s.%N)
 read_apply
+end_time=$(date +%s.%N)
+read_time=$(echo "$end_time - $start_time" | bc)
 write_apply
+
+echo $read_time
+echo $write_time
+echo $run_time
