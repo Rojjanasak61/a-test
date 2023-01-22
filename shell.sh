@@ -24,7 +24,6 @@ read_apply()
 
 write_apply()
 {
-        start_time=$(date +%s.%N)
         mkdir test-job
         cd test-job
         row=1
@@ -75,17 +74,44 @@ EOF
 
         cd ..
         rm -rf test-job
-        end_time=$(date +%s.%N)
-        run_time=$(echo "$end_time - $start_time" | bc)
         echo "success"
+}
 
+run_apply()
+{
+        echo "start test"
+        while true
+        do
+                POD_COUNT=$(kubectl get pods -n ${namespace} | wc -l)
+                if [[ $POD_COUNT == *"4"* ]]; then
+                        echo "test success"
+                        break
+                fi
+        done
+
+        cd ..
+        rm -rf test-job
+        sleep 4
+        echo "success"
 }
 
 start_time=$(date +%s.%N)
 read_apply
 end_time=$(date +%s.%N)
 read_time=$(echo "$end_time - $start_time" | bc)
+read_execution_time+=($read_time)
+
+start_time=$(date +%s.%N)
 write_apply
+end_time=$(date +%s.%N)
+run_time=$(echo "$end_time - $start_time" | bc)
+write_execution_time+=($read_time)
+
+start_time=$(date +%s.%N)
+run_apply
+end_time=$(date +%s.%N)
+run_time=$(echo "$end_time - $start_time" | bc)
+run_execution_time+=($read_time)
 
 echo "1 : " $read_time
 echo "2 : " $write_time
