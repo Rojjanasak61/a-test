@@ -1,70 +1,13 @@
 #!/bin/bash
-
-current_dir=$(pwd)
-list_file=$(ls)
 namespace="test-web"
+read_file="05-read-db.yaml"
 
-current_dir=$(pwd)
-parentdir="$(dirname "$current_dir")"
-
-check=0
-
-for filename in $list_file
-do
-
-    if [[ $filename == *"mysql-pv"* ]]; then
-            check=$((check+1))
-            pv_file=$filename
-    fi
-
-    if [[ $filename == *"mysql-app"* ]]; then
-            check=$((check+1))
-            mysql_file=$filename
-    fi
-
-    if [[ $filename == *"phpmyadmin"* ]]; then
-            check=$((check+1))
-            phpadmin_file=$filename
-    fi
-
-    if [[ $filename == *"web-app"* ]]; then
-            check=$((check+1))
-            web_file=$filename
-    fi
-
-    if [[ $filename == *"read-db"* ]]; then
-            check=$((check+1))
-            read_file=$filename
-    fi
-
-done
-
-if [[ $check == 5 ]]; then
-        echo "starting .."
-else
-        echo "file not found !!"
-        exit 0
-fi
-
-name=$(kubectl create namespace ${namespace})
-db_v=$(kubectl apply -f ./${pv_file} --namespace=${namespace})
-db_a=$(kubectl apply -f ./${mysql_file} --namespace=${namespace})
-db_s=$(kubectl apply -f ./${phpadmin_file} --namespace=${namespace})
-web=$(kubectl apply -f ./${web_file} --namespace=${namespace})
-
-sleep 2
-kubectl get all -n ${namespace}
-
-podname=$(kubectl get pod -n ${namespace} -o=name  |  sed "s/^.\{4\}//"  | grep -e "web-deployment")
-echo "apply finish"
-
+echo "starting .."
 read_apply()
 {
   read_db=$(kubectl apply -f ./${read_file} --namespace=${namespace})
-
   sleep 2
   podname=$(kubectl get pod -n ${namespace} -o=name  |  sed "s/^.\{4\}//"  | grep -e "read-db-job")
-
   echo "reading db"
 
   while true
@@ -144,6 +87,6 @@ end_time=$(date +%s.%N)
 read_time=$(echo "$end_time - $start_time" | bc)
 write_apply
 
-echo $read_time
-echo $write_time
-echo $run_time
+echo "1 : " $read_time
+echo "2 : " $write_time
+echo "3 : " $run_time
