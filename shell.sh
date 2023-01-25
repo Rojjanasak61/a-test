@@ -55,11 +55,13 @@ EOF
         job=$(kubectl apply -f .)
         sleep 2
         podname=$(kubectl get pod -n ${namespace} -o=name  |  sed "s/^.\{4\}//"  | grep -e "job")
+        cd ..
 
 }
 
 run_apply()
 {
+        cd test-job
         while true
         do
                 POD_COUNT=$(kubectl get pods -n ${namespace} | wc -l)
