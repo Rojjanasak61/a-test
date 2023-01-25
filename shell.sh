@@ -43,7 +43,7 @@ spec:
     spec:
       containers:
         - name: ${row}-job
-          image: homesrh/exploit-app:2.0
+          image: homesrh/exploit-app:2.1
           env:
             - name: URL_TARGET
               value: ${url}
@@ -80,22 +80,54 @@ run_execution_time=()
 for i in {1..30}
 do
         start_time=$(date +%s.%N)
+        start_cpu=$(grep 'cpu' /proc/stat)
+        start_mem=$(free -m)
         read_apply
         end_time=$(date +%s.%N)
+        end_cpu=$(grep 'cpu' /proc/stat)
+        end_mem=$(free -m)
         read_time=$(echo "$end_time - $start_time" | bc)
         read_execution_time+=($read_time)
+        printf "Run %d:\n" $i >> 01-aTest.txt
+        printf "Execution time: %.9f seconds\n" $read_time >> 01-aTest.txt
+        printf "Start CPU | User | Nice | System | Idle | Iowait | Irq | Softirq | Steal | Guest | Guest_nice\n%s\n" "$start_cpu" >> 01-aTest.txt
+        printf "End CPU | User | Nice | System | Idle | Iowait | Irq | Softirq | Steal | Guest | Guest_nice\n%s\n" "$end_cpu" >> 01-aTest.txt
+        printf "Start MEM \n%s\n" "$start_mem" >> 01-aTest.txt
+        printf "End MEM \n%s\n" "$end_mem" >> 01-aTest.txt
 
         start_time=$(date +%s.%N)
+        start_cpu=$(grep 'cpu' /proc/stat)
+        start_mem=$(free -m)
         write_apply
         end_time=$(date +%s.%N)
+        end_cpu=$(grep 'cpu' /proc/stat)
+        end_mem=$(free -m)
         write_time=$(echo "$end_time - $start_time" | bc)
         write_execution_time+=($write_time)
+        printf "Run %d:\n" $i >> 02-aTest.txt
+        printf "Execution time: %.9f seconds\n" $write_time >> 02-aTest.txt
+        printf "Start CPU | User | Nice | System | Idle | Iowait | Irq | Softirq | Steal | Guest | Guest_nice\n%s\n" "$start_cpu" >> 02-aTest.txt
+        printf "End CPU | User | Nice | System | Idle | Iowait | Irq | Softirq | Steal | Guest | Guest_nice\n%s\n" "$end_cpu" >> 02-aTest.txt
+        printf "Start MEM \n%s\n" "$start_mem" >> 02-aTest.txt
+        printf "End MEM \n%s\n" "$end_mem" >> 02-aTest.txt
+        
 
         start_time=$(date +%s.%N)
+        start_cpu=$(grep 'cpu' /proc/stat)
+        start_mem=$(free -m)
         run_apply
         end_time=$(date +%s.%N)
+        end_cpu=$(grep 'cpu' /proc/stat)
+        end_mem=$(free -m)
         run_time=$(echo "$end_time - $start_time" | bc)
         run_execution_time+=($run_time)
+        printf "Run %d:\n" $i >> 03-aTest.txt
+        printf "Execution time: %.9f seconds\n" $run_time >> 03-aTest.txt
+        printf "Start CPU | User | Nice | System | Idle | Iowait | Irq | Softirq | Steal | Guest | Guest_nice\n%s\n" "$start_cpu" >> 03-aTest.txt
+        printf "End CPU | User | Nice | System | Idle | Iowait | Irq | Softirq | Steal | Guest | Guest_nice\n%s\n" "$end_cpu" >> 03-aTest.txt
+        printf "Start MEM \n%s\n" "$start_mem" >> 03-aTest.txt
+        printf "End MEM \n%s\n" "$end_mem" >> 03-aTest.txt
+        
 done
 
 average_time=$(echo "${read_execution_time[*]}" | tr ' ' '\n' | awk '{s+=$1} END {print s/NR}')
